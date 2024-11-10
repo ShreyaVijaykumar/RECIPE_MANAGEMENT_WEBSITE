@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flavourscapes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        /* Header */
+        .header {
+            background-color: #4f4237;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* FAQ Bot and User Profile */
+        .faq-bot, .user-profile {
+            position: absolute;
+            top: 20px;
+            font-size: 16px;
+        }
+
+        .faq-bot {
+            left: 20px;
+            color: #ffd166;
+            cursor: pointer;
+        }
+
+        .user-profile {
+            position: absolute;       /* Positions it in the top right */
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;              /* Set width for better visibility */
+            height: 40px;             /* Set height for better visibility */
+            background-color: #463a30; /* Blue background for better contrast */
+            color: #fff;
+            border-radius: 50%;       /* Makes it a circular button */
+            text-decoration: none;    /* Removes underline if present */
+            cursor: pointer;
+            pointer-events: auto;     /* Ensures the link is clickable */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
+        }
+
+        .user-profile:hover {
+            background-color: #463a30; /* Darker shade on hover */
+        }
+
+
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Dashboard Container */
+        .container {
+            margin: 20px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar input[type="text"] {
+            width: 60%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .search-bar button {
+            padding: 12px 20px;
+            background-color: #4f4237;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search-bar button:hover {
+            background-color: #4f4237;
+        }
+
+        /* Recipe Cards Grid */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Recipe Card */
+        .recipe-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(140, 99, 50, 0.207);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-card .content {
+            padding: 20px;
+        }
+
+        .recipe-card h3 {
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .recipe-card p {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Tags */
+        .tags {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+                /* Add Recipe Overlay */
+        .add-recipe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 15px;
+        }
+
+        .recipe-card:hover .add-recipe-overlay {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Content Layout within Overlay */
+        .overlay-content {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            gap: 15px;
+        }
+
+        .section-box {
+            width: 50%;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 200px;
+        }
+
+        .section-box h6 {
+            font-size: 16px;
+            color: #007bff;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .section-box p {
+            font-size: 12px;
+            color: #555;
+            margin: 4px 0;
+            text-align: left;
+        }
+
+        .add-recipe-overlay h4 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Positioning User Profile in the extreme top-right corner */
+        .user-profile {
+            position: fixed;
+            top: 10px;  /* Adjust vertical position */
+            right: 10px; /* Adjust horizontal position */
+            background-color: #4f4237; /* Optional: Semi-transparent background */
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;  /* Ensure it's above other elements */
+        }
+
+
+
+        /* Styling for action links */
+        .action-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s; 
+        }
+
+        .action-link:hover {
+            background-color: #c87e29b2; /* Hover effect */
+        }
+
+        /* Optional Styling for the 'User' Label */
+        .user-profile span {
+            color: white;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+
+
+        .veg {
+            background-color: #28a745;
+        }
+
+        .non-veg {
+            background-color: #dc3545;
+        }
+
+        .allergen {
+            background-color: #f4a261;
+        }
+
+        
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="profile.html" class="user-profile"></a>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>FLAVORSCAPES</h1>
+        <p>-Just a colourful food palette-</p>
+
+        <!-- FAQ Bot Link -->
+        <div class="faq-bot" onclick="openFAQ()">
+            FAQ Bot
+        </div>
+
+    <!-- User Profile Section (Top Right) -->
+    <div class="user-profile">
+        <a href="/profile" class="action-link">Profile</a>
+        <a href="/logout" class="action-link">Logout</a>
+    </div>
+    
+    <!-- Container Section -->
+    <div class="container">
+
+        <!-- Search Bar Section -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search for recipes...">
+            <button type="submit">Search</button>
+        </div>
+
+        <!-- Recipe Grid Section -->
+        <div class="recipe-grid">
+
+            <!-- Sample Recipe Card (Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/premium-photo/panner-tikka-masala-indian-cuisine_113255-207481.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Paneer Butter Masala</h3>
+                    <span class="tags veg">Vegetarian</span>
+                    <span class="tags allergen">Contains Dairy, Cashew</span>
+                    <p>Delicious North Indian dish made with paneer in a rich, creamy tomato sauce.</p>
+                </div>
+
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Paneer Butter Masala</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Paneer - 1 slice</p>
+                            <p>Salt - 2.5 Tsp</p>
+                            <p>Chilli Powder - 1.5 Tsp</p>
+                            <p>Cream - 10 ml</p>
+                            <p>Milk - 1 Cup</p>
+                            <p>Cashew - 5 gms</p>
+                            <p>Onion - 2 Bulbs</p>
+                            <p>Garlic - 2</p>
+                            <p>Ginger - 2 Shreds</p>
+                            <p>Coriander - Garnish</p>
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. Boil water and cook veggies, then blend them.</p>
+                            <p>2. Gold fry the paneer.</p>
+                            <p>3. Add blended mixture to the paneer.</p>
+                            <p>4. Pour cream and milk, then simmer.</p>
+                            <p>5. Add cashew paste for creaminess.</p>
+                            <p>6. Let it cook for 15 minutes.</p>
+                            <p>7. Garnish with coriander leaves.</p>
+                            <p>8. Serve hot with naan or rice.</p>
+                            <p>9. Enjoy your dish!</p>
+                            <p>10. Adjust spices as needed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Sample Recipe Card (Non-Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/premium-photo/super-delicious-beef-biryani-image_1197144-2890.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Chicken Biryani</h3>
+                    <span class="tags non-veg">Non-Vegetarian</span>
+                    <span class="tags allergen">Contains Nuts, Ghee</span>
+                    <p>Aromatic and flavorful, this chicken biryani will make your taste buds dance!</p>
+                </div>
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Chicken Biriyani</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Basmati Rice - 1/2 Cup</p>
+                            <p>Chicken - 100 gms</p>
+                            <p>Onions - 1 Small</p>
+                            <p>Tomatoes - 1/2 Small</p>
+                            <p>Yogurt or Curd - 2 Spoons</p>
+                            <p>Ginger-Garlic paste - 1 Tsp</p>
+                            <p>Biriyani Masala - 1 Tsp</p>
+                            <p>Saffron - A pinch</p>
+                            <p>Mint and Coriander - Garnish</p>
+                            <p>Ghee  1 Tsp</p>
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. Marinate chicken with yogurt, ginger-garlic paste, biryani masala, and salt. Let it sit for 30 minutes.</p>
+                            <p>2. Rinse and soak basmati rice for 30 minutes, then boil with salt and whole spices (cardamom, cloves, bay leaf) until 70% cooked and drain.</p>
+                            <p>3. Thinly slice onions and fry in hot oil until golden and crispy.</p> 
+                            <p>4. Soak saffron in warm milk.</p>
+                            <p>5. In a large pot, heat oil or ghee, add marinated chicken, and cook until tender and the masala thickens.</p>
+                            <p>6. In a heavy-bottomed pot, layer the cooked chicken at the bottom, then top with partially cooked rice.</p>
+                            <p>7. Sprinkle fried onions, chopped mint and coriander leaves, and drizzle saffron milk on top.</p>
+                            <p>8. Cover the pot with a tight-fitting lid or seal with dough. Cook on low heat for 20-25 minutes.</p>
+                            <p>9. Let the biryani rest for 10 minutes before opening.</p>
+                            <p>10.Gently fluff up the rice with a fork and serve hot with raita or a side salad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                
+
+            <!-- Sample Recipe Card (Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/free-photo/georgian-khinkali-glass-red-wine_140725-9550.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Steamy Momos</h3>
+                    <span class="tags veg">Vegetarian</span>
+                    <span class="tags allergen">Contains Mushroom, Soy</span>
+                    <p>Healthy stir fry made with fresh veggies and a tangy sauce.</p>
+                </div>
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Steamy Momos</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Flour (Maida) - 1 cup</p>
+                            <p>Mushroom - 50 grams</p>
+                            <p>Cabbage - 2 Tsp</p>
+                            <p>Carrot - 1 Tsp</p>
+                            <p>Onion - 1 Tsp</p>
+                            <p>Ginger-Garlic Paste - 1/2 Tsp</p>
+                            <p>Soy Sauce - 1/2 Tsp</p>
+                            <p>Salt - 1/2 Tsp</p>
+                            <p>Pepper - 1/4 Tsp</p>
+                            <p>Water - As needed for dough</p>
+
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. Mix flour with a pinch of salt and water. Knead into a soft dough and set aside.</p>
+                            <p>2. Combine minced filling, cabbage, carrot, onion, ginger-garlic paste, soy sauce, salt, and pepper.</p>
+                            <p>3. Divide the dough into small balls. Roll each into thin circles.</p>
+                            <p>4. Place a spoonful of filling in the center of each circle. Fold and pleat the edges to seal.</p>
+                            <p>5. Grease the steamer tray lightly or line with cabbage leaves.</p>
+                            <p>6. Arrange momos on the tray, ensuring they don’t touch.</p>
+                            <p>7. Bring water to a boil in the steamer base.</p>
+                            <p>8. Place the tray inside, cover, and steam for 10-12 minutes.</p>
+                            <p>9. When the outer covering becomes glossy and slightly translucent, they are done.</p>
+                            <p>10.Carefully take out the momos using tongs and serve hot with a spicy dipping sauce or chutney.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Sample Recipe Card (Non-Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/premium-photo/plate-shrimps-prawns_1197144-2824.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Grilled Prawns</h3>
+                    <span class="tags non-veg">Non-Vegetarian</span>
+                    <span class="tags allergen">Contains Prawns</span>
+                    <p>Simple and tasty grilled prawns sauted with honey chilli sauce.</p>
+                </div>
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Grilled Prawns</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Prawns - 150 grams</p>
+                            <p>Olive Oil - 1 Tsp</p>
+                            <p>Lemon Juice - 1 Tsp</p>
+                            <p>Garlic - 1 clove</p>
+                            <p>Paprika - 1/4 Tsp</p>
+                            <p>Salt - 1/2 Tsp</p>
+                            <p>Black Pepper - 1/4 Tsp</p>
+                            <p>Fresh Parsley - 1 Tsp</p>
+                            <p>Soy Sauce - 1/2 Tsp</p>
+                            <p>Honey - 1/2 Tsp</p>
+
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. In a bowl, combine olive oil, lemon juice, minced garlic, paprika, salt, pepper, soy sauce, and honey to make the marinade. </p>
+                            <p>2. Add the prawns to the marinade and toss to coat well.</p>
+                            <p>3. Let the prawns marinate for at least 15 minutes.</p>
+                            <p>4. Preheat your grill to medium-high heat.</p>
+                            <p>5. Thread the prawns onto skewers (if using wooden skewers, soak them in water for 30 minutes beforehand).</p>
+                            <p>6. Place the prawns on the grill.</p>
+                            <p>7. Grill the prawns for about 2-3 minutes on each side, until they turn pink and opaque.</p>
+                            <p>8. Remove the prawns from the grill.</p>
+                            <p>9. Sprinkle with fresh parsley.</p>
+                            <p>10.Serve hot with a lemon wedge on the side.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Sample Recipe Card (Non-Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/free-photo/croissants-topped-with-chocolate-chips_140725-3584.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Chicken Croissants</h3>
+                    <span class="tags non-veg">Non-Vegetarian</span>
+                    <span class="tags allergen">Contains Dairy, Nuts, Soy, Gluten</span>
+                    <p>An Italian cuisine with a twist of cheesy shredded chicken with some delicious seasoning.</p>
+                </div>
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Chicken Croissants</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Croissant Dough: 1 pre-made dough</p>
+                            <p>Cooked Chicken: 100 grams</p>
+                            <p>Mayonnaise: 1 Tsp</p>
+                            <p>Dijon Mustard: 1 Tsp</p>
+                            <p>Salt: 1/4 Tsp</p>
+                            <p>Black Pepper: 1/4 Tsp</p>
+                            <p>Cheddar Cheese: 1 Slice</p>
+                            <p>Egg Wash: 1 Beaten egg</p>
+                            <p>Fresh Lettuce: 1 Leaf</p>
+                            <p>Tomato: 2 Slices</p>
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. Preheat the oven according to croissant dough package instructions.</p>
+                            <p>2. Roll out the croissant dough and cut it into a triangle shape.</p>
+                            <p>3. In a bowl, mix shredded chicken with mayonnaise, Dijon mustard, salt, and black pepper.</p>
+                            <p>4. Place a spoonful of the chicken mixture on the wide end of the dough triangle.</p>
+                            <p>5. Add a slice of cheddar cheese on top of the chicken mixture.</p>
+                            <p>6. Roll the dough from the wide end towards the point, tucking in the sides.</p>
+                            <p>7. Brush the croissant with egg wash.</p>
+                            <p>8. Place the rolled croissants on a baking sheet.</p>
+                            <p>9. Bake in the preheated oven until golden brown and flaky.</p>
+                            <p>10.Once cooled slightly, slice open and add fresh lettuce and tomato. </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Sample Recipe Card (Non-Veg) -->
+            <div class="recipe-card">
+                <img src="https://img.freepik.com/premium-vector/succulent-herbcrusted-chicken-thighs-rustic-delight-rosemary-thyme-golden-perfection_597121-40195.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid" alt="Recipe Image">
+                <div class="content">
+                    <h3>Potato wedges</h3>
+                    <span class="tags veg">Vegetarian</span>
+                    <span class="tags allergen">Contains Wheat starch, Dairy</span>
+                    <p>Golden roasted potatoes coated with dragon bbq honey sauce.</p>
+                </div>
+                <!-- Add Recipe Overlay with Ingredients and Recipe Steps -->
+                <div class="add-recipe-overlay">
+                    <h4>Potato Wedges</h4>
+                    <div class="overlay-content">
+                        <!-- Ingredients Section -->
+                        <div class="section-box">
+                            <h6>INGREDIENTS</h6>
+                            <p>Potatoes: 1 large, cut into wedges</p>
+                            <p>Olive Oil: 1 Tsp</p>
+                            <p>Salt: 1/2 Tsp</p>
+                            <p>Black Pepper: 1/4 Tsp</p>
+                            <p>Paprika: 1/4 Tsp</p>
+                            <p>Garlic Powder: 1/4 Tsp</p>
+                            <p>Onion Powder: 1/4 Tsp</p>
+                            <p>Dried Rosemary: 1/4 Tsp</p>
+                            <p>Parmesan Cheese: 1 Tsp grated</p>
+                            <p>Parsley: 1 Tsp</p>
+                        </div>
+                        
+                        <!-- Recipe Steps Section -->
+                        <div class="section-box">
+                            <h6>RECIPE</h6>
+                            <p>1. Preheat the oven to 200°C (400°F).</p>
+                            <p>2. In a bowl, mix olive oil with salt, pepper, paprika, garlic powder, onion powder, and dried rosemary.</p>
+                            <p>3. Toss potato wedges in the seasoned oil mixture until well coated.</p>
+                            <p>4. Arrange the wedges in a single layer on a baking sheet.</p>
+                            <p>5. Sprinkle grated Parmesan cheese on top if using.</p>
+                            <p>6. Bake for 25-30 minutes, turning once halfway through, until golden and crispy.</p>
+                            <p>7. Remove from the oven and let them cool slightly.</p>
+                            <p>8. Garnish with chopped parsley.</p>
+                            <p>9. Serve hot with your favorite dipping sauce.</p>
+                            <p>10.Enjoy your delicious and crispy potato wedges! </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+        </div>
+
+    </div>
+
+    <!-- FAQ Modal Script -->
+    <script>
+        function openFAQ() {
+            alert("FAQ Bot - Coming soon!");
+        }
+    </script>
+
+</body>
+</html>
