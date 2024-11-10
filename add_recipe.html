@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if recipe %}Edit Recipe{% else %}Add Recipe{% endif %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://img.freepik.com/premium-vector/black-white-doodle-foods-background_141928-565.jpg?ga=GA1.1.1911128232.1729533487&semt=ais_hybrid') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container */
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        /* Heading */
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 28px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            text-align: left;
+            margin: 5px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Input Fields */
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #4f4237;
+            color: white;
+            padding: 12px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3e3629;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 0 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{% if recipe %}Edit Recipe{% else %}Add Recipe{% endif %}</h2>
+        <form action="/add-recipe" method="post">
+            <input type="text" name="name" placeholder="Recipe Name" required>
+            <select name="type">
+                <option value="veg">Vegetarian</option>
+                <option value="non-veg">Non-Vegetarian</option>
+            </select>
+            <input type="text" name="allergens" placeholder="Allergens">
+            <textarea name="ingredients" placeholder="Ingredients" required></textarea>
+            <textarea name="description" placeholder="Description" required></textarea>
+            <input type="text" name="image" placeholder="Image URL">
+            <button type="submit">Add Recipe</button>
+        </form>
+    </div>
+</body>
+</html>
